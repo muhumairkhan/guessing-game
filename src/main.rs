@@ -3,14 +3,32 @@ use std::error::Error;
 use std::io::{BufRead, stdin};
 
 fn main() {
-    println!("**Welcome to the Guessing Game**");
+    let welcome = r#"
+==================================================
+   ____ _   _ _____ ____ ____    ___ _____ _ 
+  / ___| | | | ____/ ___/ ___|  |_ _|_   _| |
+
+ | |  _| | | |  _| \___ \___ \   | |  | | | |
+ | |_| | |_| | |___ ___) |__) |  | |  | | |_|
+  \____|\___/|_____|____/____/  |___| |_| (_)
+"#;
+
+    println!("{welcome}");
 
     // endless game loop
     loop {
-        println!("Random number is generated.",);
-        let mut rng: rand::prelude::ThreadRng = rand::rng();
+        let msg = r#" 
+==================================================
+  Welcome to the Number Guessing Game!
+  I've picked a secret number between 1 and 100.
+  Can you guess what it is?
+==================================================
+"#;
+        println!("{msg}");
 
-        game_loop(rng);
+        let rng: rand::prelude::ThreadRng = rand::rng();
+
+        let _ = game_loop(rng);
     }
 }
 
@@ -18,10 +36,11 @@ fn main() {
 // Box trait that is common in all errors i.e std::error::Error
 fn game_loop(mut rng: rand::prelude::ThreadRng) -> Result<(), Box<dyn Error>> {
     let win_num: i32 = rng.random_range(1..=100);
+    println!("Random: {}", win_num);
 
     // loop to give users multiple guesses
     loop {
-        println!("Random: {}", win_num);
+        
 
         println!("Enter a number to guess:");
         let mut line = String::new();
@@ -48,6 +67,8 @@ __   __ ___   _   _    __        __ ___  _   _  _
             println!("{banner}");
             break;
         } else {
+            // add a close / far range
+
             println!("Wrong guess. Try again. \n");
         }
     }
