@@ -1,4 +1,5 @@
 use rand::RngExt;
+use std::cmp::{self, Ordering};
 use std::error::Error;
 use std::io::{BufRead, stdin};
 
@@ -36,12 +37,9 @@ fn main() {
 // Box trait that is common in all errors i.e std::error::Error
 fn game_loop(mut rng: rand::prelude::ThreadRng) -> Result<(), Box<dyn Error>> {
     let win_num: i32 = rng.random_range(1..=100);
-    println!("Random: {}", win_num);
 
     // loop to give users multiple guesses
     loop {
-        
-
         println!("Enter a number to guess:");
         let mut line = String::new();
 
@@ -54,8 +52,12 @@ fn game_loop(mut rng: rand::prelude::ThreadRng) -> Result<(), Box<dyn Error>> {
         // trim() trailing 'n from `line` and parse into i32
         let num: i32 = line.trim().parse()?;
 
-        if num == win_num {
-            let banner = r#"
+        // let user know about close / far range
+        match num.cmp(&win_num) {
+            Ordering::Less => println!("Your guess is less. Try again."),
+            Ordering::Greater => println!("Your guess is greater. Try again."),
+            Ordering::Equal => {
+                let banner = r#"
 __   __ ___   _   _    __        __ ___  _   _  _ 
 \ \ / // _ \ | | | |   \ \      / /|_ _|| \ | || |
  \ V /| | | || | | |    \ \ /\ / /  | | |  \| || |
@@ -64,12 +66,9 @@ __   __ ___   _   _    __        __ ___  _   _  _
   |_|  \___/  \___/       \_/\_/   |___||_| \_|(_)
 "#;
 
-            println!("{banner}");
-            break;
-        } else {
-            // add a close / far range
-
-            println!("Wrong guess. Try again. \n");
+                println!("{banner}");
+                break;
+            }
         }
     }
 
